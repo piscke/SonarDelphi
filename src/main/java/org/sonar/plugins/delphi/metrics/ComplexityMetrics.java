@@ -205,16 +205,21 @@ public class ComplexityMetrics extends DefaultMetrics implements MetricsInterfac
 
   private void addIssue(InputFile inputFile, FunctionInterface func) {
     if (func.getComplexity() > threshold) {
-      NewIssue newIssue = context.newIssue();
-      newIssue
-              .forRule(methodCyclomaticComplexityRule.ruleKey())
-              .at(newIssue.newLocation()
-                      .on(inputFile)
-                      .at(inputFile.newRange(func.getBodyLine(), 1,
-                              func.getBodyLine(), 2))
-                      .message(String.format("The Cyclomatic Complexity of this method \"%s\" is %d which is greater than %d authorized.",
-                              func.getRealName(), func.getComplexity(), threshold)));
-      newIssue.save();
+        try{
+            NewIssue newIssue = context.newIssue();
+            newIssue
+                    .forRule(methodCyclomaticComplexityRule.ruleKey())
+                    .at(newIssue.newLocation()
+                            .on(inputFile)
+                            .at(inputFile.newRange(func.getBodyLine(), 1,
+                                    func.getBodyLine(), 2))
+                            .message(String.format("The Cyclomatic Complexity of this method \"%s\" is %d which is greater than %d authorized.",
+                                    func.getRealName(), func.getComplexity(), threshold)));
+            newIssue.save();
+        }catch(Exception err){
+            DelphiUtils.LOG.debug("Error saving newIssue to unused function. " + inputFile);
+            DelphiUtils.LOG.debug("Error: " + err.toString());
+        }
     }
   }
 }
