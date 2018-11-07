@@ -22,6 +22,7 @@ import net.sourceforge.pmd.RuleContext;
 import org.antlr.runtime.tree.Tree;
 import org.sonar.plugins.delphi.antlr.DelphiLexer;
 import org.sonar.plugins.delphi.antlr.ast.DelphiPMDNode;
+import org.sonar.plugins.delphi.utils.DelphiUtils;
 
 public class UnitNameRule extends DelphiRule {
 
@@ -37,7 +38,13 @@ public class UnitNameRule extends DelphiRule {
         }
 
         char firstChar = child.getText().charAt(0);
-        if (firstChar != Character.toUpperCase(firstChar)) {
+        char pascalCaseChar = firstChar;
+        if (firstChar == 'u' && child.getText().length() > 1)
+        {
+            pascalCaseChar = child.getText().charAt(1);
+        }        
+        if (pascalCaseChar != Character.toUpperCase(pascalCaseChar)) 
+        {
           addViolation(ctx, node);
           break;
         }
