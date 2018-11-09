@@ -56,6 +56,7 @@ import org.xml.sax.SAXParseException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.InputSource;
 
 /**
  * PMD sensor
@@ -110,47 +111,61 @@ public class DelphiPmdSensor implements Sensor {
     newIssue.save();
   }
 
-  void parsePMDreport(File reportFile)
-  {
-    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-    try {
-       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-       Document doc = docBuilder.parse(reportFile);
+    void parsePMDreport(File reportFile) {
+        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        try {
+            Document doc = null;
+            DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+            FileReader fr = new FileReader(reportFile);
+            try {
+                BufferedReader rd = new BufferedReader(fr);
+                try {
+                    StringBuilder builder = new StringBuilder();
+                    String inputLine = null;
+                    while ((inputLine = rd.readLine()) != null) {
+                        builder.append(inputLine);
+                    }
+                    doc = docBuilder.parse(new InputSource(new StringReader(builder.toString())));
+                } finally {
+                    rd.close();
+                }
+            } finally {
+                fr.close();
+            }
 
-       // normalize text representation
-       doc.getDocumentElement().normalize();
+            // normalize text representation
+            doc.getDocumentElement().normalize();
 
-       NodeList files = doc.getElementsByTagName("file");
+            NodeList files = doc.getElementsByTagName("file");
 
-       for (int f = 0; f < files.getLength(); f++) {
-         Element file = (Element)files.item(f);
-         String fileName = file.getAttributes().getNamedItem("name").getTextContent();
-         NodeList violations = file.getElementsByTagName("violation");
-         for (int n = 0; n < violations.getLength(); n++)
-         {
-           Node violation = violations.item(n);
-           String beginLine = violation.getAttributes().getNamedItem("beginline").getTextContent();
-           String endLine = violation.getAttributes().getNamedItem("endline").getTextContent();
-           String beginColumn = violation.getAttributes().getNamedItem("begincolumn").getTextContent();
-           String endColumn = violation.getAttributes().getNamedItem("endcolumn").getTextContent();
-           String rule = violation.getAttributes().getNamedItem("rule").getTextContent();
-           String priority = violation.getAttributes().getNamedItem("priority").getTextContent();
-           String message = violation.getTextContent();
-           addIssue(rule, fileName, Integer.parseInt(beginLine), Integer.parseInt(beginColumn),
-             Integer.parseInt(endLine), message, Integer.parseInt(priority));
-         }
-       }
-    } catch (SAXParseException err) {
-      DelphiUtils.LOG.info("SAXParseException");
-    } catch (SAXException e) {
-      DelphiUtils.LOG.info("SAXException");
-       Exception x = e.getException ();
-       ((x == null) ? e : x).printStackTrace ();
-    } catch (Throwable t) {
-      DelphiUtils.LOG.info("Throwable");
-       t.printStackTrace ();
+            for (int f = 0; f < files.getLength(); f++) {
+                Element file = (Element) files.item(f);
+                String fileName = file.getAttributes().getNamedItem("name").getTextContent();
+                NodeList violations = file.getElementsByTagName("violation");
+                for (int n = 0; n < violations.getLength(); n++) {
+                    Node violation = violations.item(n);
+                    String beginLine = violation.getAttributes().getNamedItem("beginline").getTextContent();
+                    String endLine = violation.getAttributes().getNamedItem("endline").getTextContent();
+                    String beginColumn = violation.getAttributes().getNamedItem("begincolumn").getTextContent();
+                    String endColumn = violation.getAttributes().getNamedItem("endcolumn").getTextContent();
+                    String rule = violation.getAttributes().getNamedItem("rule").getTextContent();
+                    String priority = violation.getAttributes().getNamedItem("priority").getTextContent();
+                    String message = violation.getTextContent();
+                    addIssue(rule, fileName, Integer.parseInt(beginLine), Integer.parseInt(beginColumn),
+                            Integer.parseInt(endLine), message, Integer.parseInt(priority));
+                }
+            }
+        } catch (SAXParseException err) {
+            DelphiUtils.LOG.info("SAXParseException");
+        } catch (SAXException e) {
+            DelphiUtils.LOG.info("SAXException");
+            Exception x = e.getException();
+            ((x == null) ? e : x).printStackTrace();
+        } catch (Throwable t) {
+            DelphiUtils.LOG.info("Throwable");
+            t.printStackTrace();
+        }
     }
-  }
 
   /**
    * The actual sensor code.
