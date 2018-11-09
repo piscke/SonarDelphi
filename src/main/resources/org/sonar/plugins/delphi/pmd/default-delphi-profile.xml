@@ -145,11 +145,11 @@
 	<rule since="" class="org.sonar.plugins.delphi.pmd.rules.DelphiRule" name="UnusedUnitRule">
 		<priority>5</priority>
 	</rule>
-
+<!--
 	<rule since="" class="org.sonar.plugins.delphi.pmd.rules.DelphiRule" name="UnusedFunctionRule">
 		<priority>5</priority>
 	</rule>
-
+-->
 	<rule since="" class="org.sonar.plugins.delphi.pmd.rules.NoInheritedStatementRule" name="ConstructorWithoutInheritedStatementRule">
 		<priority>2</priority>
 	</rule>

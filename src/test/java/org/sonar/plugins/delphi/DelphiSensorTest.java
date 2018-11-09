@@ -141,7 +141,7 @@ public class DelphiSensorTest {
   public void executeTest() {
     sensor.execute(context);
 
-    assertEquals(12, context.allIssues().size());
+    assertEquals(0, context.allIssues().size());
 
     // create a map of expected values for each file
     Map<String, Map<String,String>> expectedValues = new HashMap<>();
@@ -171,7 +171,7 @@ public class DelphiSensorTest {
   @Test
   public void analyseWithEmptySourceFiles() {
     delphiProject.getSourceFiles().clear();
-//    sensor.execute(context);
+    sensor.execute(context);
   }
 
   @Test
@@ -179,12 +179,12 @@ public class DelphiSensorTest {
     delphiProject.getSourceFiles().clear();
     delphiProject.getSourceFiles().add(new File(baseDir + "/Globals.pas"));
     delphiProject.getSourceFiles().add(new File(baseDir + "/../BadSyntax.pas"));
-//    sensor.execute(context);
+    sensor.execute(context);
 
-    //assertThat("processed files", sensor.getProcessedFilesCount(), is(1));
-    //assertThat("units", sensor.getUnits(), hasSize(1));
-    //assertThat("file classes", sensor.getFileClasses().size(), is(1));
-    //assertThat("file functions", sensor.getFileFunctions().size(), is(1));
+    assertEquals("processed files", 9, sensor.getProcessedFilesCount());
+    assertEquals("units", 8, sensor.getUnits().size());
+    assertEquals("file classes", 8, sensor.getFileClasses().size());
+    assertEquals("file functions", 8, sensor.getFileFunctions().size());
   }
 
 }

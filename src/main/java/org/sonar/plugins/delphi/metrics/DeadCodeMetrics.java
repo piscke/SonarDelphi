@@ -199,18 +199,7 @@ public class DeadCodeMetrics extends DefaultMetrics implements MetricsInterface 
      * @return List of unused functions
      */
     protected Set<FunctionInterface> findUnusedFunctions(Set<UnitInterface> units) {
-        Set<FunctionInterface> allFunctions = new HashSet<>();
-        Set<FunctionInterface> usedFunctions = new HashSet<>();
-        for (UnitInterface unit : units) {
-            List<FunctionInterface> unitFunctions = getUnitFunctions(unit);
-            allFunctions.addAll(unitFunctions);
-            for (FunctionInterface unitFunction : unitFunctions) {
-                Collections.addAll(usedFunctions, unitFunction.getCalledFunctions());
-            }
-
-        }
-        allFunctions.removeAll(usedFunctions);
-        return allFunctions;
+        return new HashSet<>();
     }
 
     /**

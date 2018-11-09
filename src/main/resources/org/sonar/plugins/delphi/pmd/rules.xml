@@ -270,7 +270,7 @@
 
 	<rule since="" class="org.sonar.plugins.delphi.pmd.rules.UnitNameRule" message="Unit names should comply with a naming convention"
 		name="UnitNameRule">
-		<description>According to Object Pascal Style Guide unit name should follow Pascal Case.
+		<description>According to Object Pascal Style Guide unit name should follow Pascal Case. At Benner unit name can begin with 'u' followed by Pascal Case name.
 		</description>
 		<properties>
 			<property name="baseEffort">
